@@ -1,4 +1,4 @@
-package cmd.tnz.xbox;
+package com.tnz.xbox;
 
 import java.text.MessageFormat;
 import java.util.Map;

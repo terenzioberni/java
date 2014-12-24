@@ -1,4 +1,4 @@
-package cmd.tnz.xbox;
+package com.tnz.xbox;
 
 import java.io.BufferedReader;
 import java.io.File;
