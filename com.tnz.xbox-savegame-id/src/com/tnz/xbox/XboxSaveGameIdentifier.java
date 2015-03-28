@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class XboxSaveGameIdentifier {
+	
 	private Map<String, String> map;
 
 	public Map<String, String> getMap() {
