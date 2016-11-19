@@ -1,0 +1,104 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+    http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
+    http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd"
+	default-autowire="byName">
+
+	<bean id="customizableTraceInterceptor"
+		class="org.springframework.aop.interceptor.CustomizableTraceInterceptor">
+		<property name="useDynamicLogger" value="true" />
+		<property name="enterMessage" value="Entering $[methodName]($[arguments])" />
+		<property name="exitMessage" value="Leaving $[methodName](): $[returnValue]" />
+	</bean>
+
+	<aop:config>
+		<aop:advisor advice-ref="customizableTraceInterceptor"
+			pointcut="execution(public * com.tnz..*.*(..))" />
+	</aop:config>
+
+	<jdbc:embedded-database id="dataSource" />
+
+	<!-- <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" -->
+	<!-- destroy-method="close"> -->
+	<!-- <property name="driverClassName" value="org.hsqldb.jdbcDriver" /> -->
+	<!-- <property name="url" value="jdbc:hsqldb:mem:." /> -->
+	<!-- <property name="username" value="sa" /> -->
+	<!-- <property name="password" value="" /> -->
+	<!-- </bean> -->
+
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="packagesToScan" value="com.tnz.model.hibernate" />
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">org.hibernate.dialect.HSQLDialect</prop>
+				<prop key="hibernate.show_sql">true</prop>
+				<prop key="hibernate.default_schema">PUBLIC</prop>
+				<prop key="hibernate.hbm2ddl.auto">create-drop</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean id="transactionManager"
+		class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+
+	<tx:annotation-driven transaction-manager="transactionManager" />
+
+	<!-- DAL -->
+	<bean id="userDao" class="com.tnz.dal.hibernate.UserDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+
+	<bean id="sessionDao" class="com.tnz.dal.std.SessionDaoImpl" />
+
+	<!-- Business -->
+	<bean id="loginUseCase" class="com.tnz.business.std.LoginUseCaseImpl">
+		<property name="userDao" ref="userDao" />
+		<property name="sessionManager" ref="sessionManager" />
+		<property name="passwordGenerator" ref="passwordGenerator" />
+	</bean>
+
+	<bean id="userUseCase" class="com.tnz.business.std.UserUseCaseImpl">
+		<property name="userDao" ref="userDao" />
+		<property name="passwordGenerator" ref="passwordGenerator" />
+	</bean>
+
+	<bean id="passwordGenerator" class="com.tnz.business.std.PasswordGeneratorImpl" />
+
+	<bean id="sessionManager" class="com.tnz.business.std.SessionManagerImpl">
+		<property name="sessionDao" ref="sessionDao" />
+	</bean>
+
+	<!-- Service -->
+	<bean id="loginService" class="com.tnz.service.std.LoginServiceImpl">
+		<property name="loginUseCase" ref="loginUseCase" />
+	</bean>
+
+	<bean id="userService" class="com.tnz.service.std.UserServiceImpl">
+		<property name="userUseCase" ref="userUseCase" />
+	</bean>
+
+	<!-- Presentation -->
+	<bean id="presentationContext" class="com.tnz.presentation.std.PresentationContextImpl" />
+
+	<bean id="consoleIOPresenter" abstract="true">
+		<property name="presentationContext" ref="presentationContext" />
+	</bean>
+
+	<bean id="loginPresenter" class="com.tnz.presentation.std.LoginPresenterImpl"
+		parent="consoleIOPresenter">
+		<property name="loginService" ref="loginService" />
+	</bean>
+
+	<bean id="userPresenter" class="com.tnz.presentation.std.UserPresenterImpl"
+		parent="consoleIOPresenter">
+		<property name="userService" ref="userService" />
+	</bean>
+
+</beans>
