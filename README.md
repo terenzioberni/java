@@ -9,3 +9,7 @@ Null Baldini in Ravenna.
 Everyone who attended the lectures is entitled to use it and modify it for non 
 commercial purposes.
 Redistribution outside this licensing terms is forbidden.
+
+- com.tnz.xbox-savegame-id
+simple reader of the savegame files which displays the name of the game the savegame
+belongs to
