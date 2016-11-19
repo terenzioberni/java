@@ -1,0 +1,9 @@
+This software is property of Terenzio Berni (C) 2013-2016. All rights reserved.
+The software and source code is provided as it is with no warranty.
+This software is part of the two lessons given in Nov-Dev 2013 at I.T.I.S.
+Null Baldini in Ravenna. 
+Everyone who attended the lessons is entitled to use it and modify it for non 
+commercial purposes.
+Redistribution outside this licensing terms is forbidden.
+For any commercial purposes or specific questions please contact the author at:
+terenzio.berni@gmail.com

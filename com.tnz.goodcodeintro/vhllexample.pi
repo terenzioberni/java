@@ -1,0 +1,10 @@
+#! /usr/bin/python
+
+x = 0
+i = 0
+while i < 1000:
+  x += 0.1
+  i += 1
+
+print "x = 100? ",  x == 100.0, x
+print "{0:.15f}".format(x)
